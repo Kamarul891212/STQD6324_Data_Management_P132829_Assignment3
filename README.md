@@ -36,10 +36,13 @@ MLlib supports multiple programming languages such as Python, Java, Scala and R 
 
 + The Iris dataset need to be uploaded into the HDFS ecosystem before loading the dataset into the Spark DataFrame. This analysis will use a terminal which is PuTTY to access a remote server with Spark installed. In PuTTY, we use 'vi' to create and edit a Python script named 'iris_classification.py'. The Python script will consist of all the steps from loading the dataset until comparing the predicted and actual labels to assess the performance of the tuned model.
 
+```
 vi iris_classification.py
+```
 
 + Press 'i' to enter insert mode in 'vi' and write the complete Python script as below:
 
+```
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, DoubleType, StringType
 from pyspark.ml.feature import StringIndexer, VectorAssembler
@@ -89,7 +92,6 @@ def evaluate(predictions):
     precision_evaluator = MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction", metricName="weightedPrecision")
     recall_evaluator = MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction", metricName="weightedRecall")
     f1_evaluator = MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction", metricName="f1")
-
     precision = precision_evaluator.evaluate(predictions)
     recall = recall_evaluator.evaluate(predictions)
     f1_score = f1_evaluator.evaluate(predictions)
@@ -105,4 +107,4 @@ print("Test Error: %g" % (1.0 - accuracy_rf))
 predictions_rf.select("prediction", "label").show()
 
 spark.stop()
-
+```

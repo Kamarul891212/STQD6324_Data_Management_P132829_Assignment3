@@ -108,3 +108,99 @@ predictions_rf.select("prediction", "label").show()
 
 spark.stop()
 ```
+
+## Classification steps
+
+### Step 1: Load the dataset into Spark MLlib
+
+```
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType, StructField, DoubleType, StringType
+from pyspark.ml.feature import StringIndexer, VectorAssembler
+from pyspark.ml.classification import RandomForestClassifier
+from pyspark.ml import Pipeline
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
+from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
+
+spark = SparkSession.builder.appName("IrisClassification").getOrCreate()
+
+schema = StructType([
+    StructField("sepal_length", DoubleType(), True),
+    StructField("sepal_width", DoubleType(), True),
+    StructField("petal_length", DoubleType(), True),
+    StructField("petal_width", DoubleType(), True),
+    StructField("species", StringType(), True)
+])
+
+iris_df = spark.read.csv("/user/maria_dev/kamarul/iris.data", header = False, schema = schema)
+iris_df.show()
+```
+
++ The initial part of the script above consist of the process to import the required libraries for the analysis and creating a Spark session with the application name "IrisClassification". The script also define the schema for the dataset and load the Iris dataset into a DataFrame. It also displays the first few rows of the DataFrame.
+
+
+![image01.jpeg](https://drive.google.com/file/d/1VIBRrolkxmhIZ_MB9NKpZD2E6RItnFhX/view?usp=drive_link)
+
+### Step 2: Splitting the dataset into training and testing sets
+
+```
+indexer = StringIndexer(inputCol="species", outputCol="label").fit(iris_df)
+
+assembler = VectorAssembler(inputCols=["sepal_length", "sepal_width", "petal_length", "petal_width"], outputCol="features")
+
+training_data, test_data = iris_df.randomSplit([0.8, 0.2], seed=1234)
+```
+
++ The DataFrame is splits into training and testing sets with 80% of the data is used for training and 20% is used for testing. The seed is set to "1234" for a random number generation to ensure reproducibility.
+
+### Step 3: Selecting the Random Forest for the classification algorithm
+
+```
+rf = RandomForestClassifier(labelCol="label", featuresCol="features")
+
+pipeline = Pipeline(stages=[indexer, assembler, rf])
+
+param_grid_rf = ParamGridBuilder() \
+    .addGrid(rf.numTrees, [10, 20, 30]) \
+    .addGrid(rf.maxDepth, [5, 10, 15]) \
+    .build()
+
+evaluator = MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction", metricName="accuracy")
+```
+
++ The Random Forest algorithm is used for this analysis. 
+
+### Step 5: Evaluate the performance of the model
+
+```
+predictions_rf = cv_model_rf.transform(test_data)
+
+def evaluate(predictions):
+    accuracy = evaluator.evaluate(predictions)
+    precision_evaluator = MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction", metricName="weightedPrecision")
+    recall_evaluator = MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction", metricName="weightedRecall")
+    f1_evaluator = MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction", metricName="f1")
+
+    precision = precision_evaluator.evaluate(predictions)
+    recall = recall_evaluator.evaluate(predictions)
+    f1_score = f1_evaluator.evaluate(predictions)
+
+    return accuracy, precision, recall, f1_score
+
+accuracy_rf, precision_rf, recall_rf, f1_score_rf = evaluate(predictions_rf)
+```
+
++ The performance of the model is evaluated by relevant metrices consist of accuracy, precision, recall and F1 score.
+
+### Step 6: Comparative analysis
+
+```
+print("Random Forest - Accuracy: {}, Precision: {}, Recall: {}, F1 Score: {}".format(accuracy_rf, precision_rf, recall_rf, f1_score_rf))
+print("Test Error: %g" % (1.0 - accuracy_rf))
+
+
+predictions_rf.select("prediction", "label").show()
+
+spark.stop()
+```
+![image02.jpeg](https://drive.google.com/file/d/1khhaO3OLbAGc8D0KXiQkQj-2A46yf69u/view?usp=drive_link)

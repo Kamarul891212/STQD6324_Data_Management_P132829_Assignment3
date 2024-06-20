@@ -139,7 +139,7 @@ iris_df.show()
 + The initial part of the script above consist of the process to import the required libraries for the analysis and creating a Spark session with the application name "IrisClassification". The script also define the schema for the dataset and load the Iris dataset into a DataFrame. It also displays the first few rows of the DataFrame.
 
 
-![image01.jpeg](https://drive.google.com/file/d/1VIBRrolkxmhIZ_MB9NKpZD2E6RItnFhX/view?usp=drive_link)
+![Alt text](https://github.com/Kamarul891212/STQD6324_Data_Management_P132829_Assignment3/blob/master/images/image01.jpg)
 
 ### Step 2: Splitting the dataset into training and testing sets
 
@@ -203,4 +203,4 @@ predictions_rf.select("prediction", "label").show()
 
 spark.stop()
 ```
-![image02.jpeg](https://drive.google.com/file/d/1khhaO3OLbAGc8D0KXiQkQj-2A46yf69u/view?usp=drive_link)
+![Alt text](https://github.com/Kamarul891212/STQD6324_Data_Management_P132829_Assignment3/blob/master/images/image02.jpg)

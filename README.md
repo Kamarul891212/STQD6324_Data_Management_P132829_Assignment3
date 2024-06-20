@@ -204,3 +204,11 @@ predictions_rf.select("prediction", "label").show()
 spark.stop()
 ```
 ![Alt text](https://github.com/Kamarul891212/STQD6324_Data_Management_P132829_Assignment3/blob/master/images/image02.jpg)
+
++ The Random Forest classifier achieved an impressive accuracy of 95.83%, precision of 96.35%, recall of 95.83%, and F1 score of 95.81%, with a test error of only 4.17%. These metrics indicate that the model is highly effective at correctly classifying the Iris species with minimal false positives and false negatives, demonstrating a good balance between precision and recall.
+
+## Conclusion
+
+The high performance metrics indicate that the Random Forest classifier is a robust model for classifying Iris species, showing excellent generalization to unseen data. The low test error further confirms the model's reliability in practical applications, making it suitable for deployment in real-world scenarios where accurate species identification is critical.
+
+Despite the strong performance, further validation with different datasets or enhanced cross-validation techniques is recommended to ensure the model's robustness. Additionally, comparing the Random Forest model with other classification algorithms and exploring more advanced hyperparameter tuning methods could potentially yield even better results, ensuring the best possible model for Iris species classification.
